@@ -253,7 +253,12 @@ aside nav .open-menu{
 	display:block;
 	background:url(../images/blank.gif);
 }
-.ali{margin-top: 85;};
+.ali{
+	margin-top: 85;
+};
+#ali{
+	margin-top: 85;
+};
 /*#content*/
 #content{
 	position:absolute;
