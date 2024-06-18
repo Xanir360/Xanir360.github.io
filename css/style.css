@@ -1,12 +1,20 @@
 @import url('http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css');
 
-@font-face {
+/*@font-face {
 	font-family: 'yekan';
 	src: url('http://cdn.bayan.ir/blog/templates/shared/fonts/BYekan.woff?download') format('woff');
 	font-weight: normal;
 	font-style: normal;
+}*/
+@font-face {
+  font-family: yekan;
+  src: url('BYekan.eot');
+  src: url('BYekan.eot?#iefix') format('FontName-opentype'),
+       url('BYekan.woff') format('woff'),
+       url('BYekan.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
 }
-
 /*CSS RESET*/
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,details,figcaption,figure,footer,header,hgroup,mark,menu,meter,nav,output,progress,section,summary,time{margin:0;padding:0;border:0;outline:0;vertical-align: baseline;background:transparent;}article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, output, section, summary{display:block;}meter,progress,mark, time{display:inline;}ol, ul {list-style: none;}blockquote,q{quotes: none;}html,body{height:100%;}img {border:0;vertical-align:top;text-align:left;}object{vertical-align:top;outline:none;}ul,ol{list-style:none;}table,table td{padding:0;border:none;border-collapse:collapse;}input,select,textarea{font-family:tahoma,Arial, Helvetica, sans-serif;font-size:1em;vertical-align:middle;font-weight:normal;margin:0;padding:0;}textarea{overflow:auto;}
 
