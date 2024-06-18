@@ -8,8 +8,8 @@
 }*/
 @font-face {
   font-family: yekan;
-  src: url('BYekan.eot');
-  src: url('BYekan.eot?#iefix') format('FontName-opentype'),
+  src: url('../fonts/BYekan.eot');
+  src: url('../fonts/BYekan.eot?#iefix') format('FontName-opentype'),
        url('BYekan.woff') format('woff'),
        url('BYekan.ttf') format('truetype');
   font-weight: normal;
