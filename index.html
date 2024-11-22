@@ -37,7 +37,38 @@
 	<script src="https://unpkg.com/kursor" defer data-deferred="3"></script> 
 	<script src="data:text/javascript;base64,bmV3IGt1cnNvcih7dHlwZToxLGNvbG9yOicjMDAwMDAwJyxyZW1vdmVEZWZhdWx0Q3Vyc29yOiExfSk=" defer></script>
 
+  <script>
+        // Function to get the browser type
+        function getBrowserType() {
+            var ua = navigator.userAgent;
+            var browser = "Unknown Browser";
+            if (ua.indexOf("Chrome") > -1) {
+                browser = "Google Chrome";
+            } else if (ua.indexOf("Firefox") > -1) {
+                browser = "Mozilla Firefox";
+            } else if (ua.indexOf("Safari") > -1 && ua.indexOf("Chrome") === -1) {
+                browser = "Safari";
+            } else if (ua.indexOf("MSIE") > -1 || ua.indexOf("Trident") > -1) {
+                browser = "Internet Explorer";
+            }
+            return browser;
+        }
 
+        // Function to display IP and browser type
+        function displayInfo(ip, country) {
+            document.getElementById("ip").innerText = "IP Address: " + ip;
+            document.getElementById("browser").innerText = "Browser: " + getBrowserType();
+            if (country !== "IR") {
+                alert("شما تنها از آی‌پی‌های ایران قادر به استفاده هستید. لطفا فیلترشکن خود را غیرفعال کنید.");
+                document.body.innerHTML = '';
+            }
+        }
+
+        // Get the IP address and country using an external service
+        fetch('https://ipinfo.io/json?token=d437c7950a5467')
+            .then(response => response.json())
+            .then(data => displayInfo(data.ip, data.country));
+    </script>
 </head>
 <body>
 <div id="gspinner"></div>
