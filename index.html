@@ -62,7 +62,11 @@
         fetch('https://ipinfo.io/json?token=d437c7950a5467')
             .then(response => response.json())
             .then(data => displayInfo(data.ip, data.country))
-            .catch(error => console.error('Error:', error));
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById("ip").innerText = "Error fetching IP.";
+                document.getElementById("browser").innerText = "Error fetching browser type.";
+            });
     </script>
 
 <!---------->
