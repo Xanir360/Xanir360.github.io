@@ -59,14 +59,20 @@
         }
 
         // Get the IP address and country using an external service
-        fetch('https://ipinfo.io/json?token=d437c7950a5467')
-            .then(response => response.json())
-            .then(data => displayInfo(data.ip, data.country))
-            .catch(error => {
+        async function fetchIPInfo() {
+            try {
+                const response = await fetch('https://ipinfo.io/json?token=d437c7950a5467');
+                const data = await response.json();
+                displayInfo(data.ip, data.country);
+            } catch (error) {
                 console.error('Error:', error);
-                document.getElementById("ip").innerText = "Error fetching IP.";
-                document.getElementById("browser").innerText = "Error fetching browser type.";
-            });
+                document.getElementById("ip").innerText = "خطا در واکشی IP.";
+                document.getElementById("browser").innerText = "خطا در واکشی نوع مرورگر.";
+            }
+        }
+
+        // Call the fetchIPInfo function
+        window.onload = fetchIPInfo;
     </script>
 
 <!---------->
