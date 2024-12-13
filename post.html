@@ -39,10 +39,13 @@
     <textarea id="editor" placeholder="محتوا" rows="5" required></textarea>
     <button onclick="addPost()">انتشار</button>
   </div>
-  
+
   <script>
-    // Initialize CKEditor
-    CKEDITOR.replace('editor');
+    // Initialize CKEditor after window load to ensure it's defined
+    window.onload = () => {
+      CKEDITOR.replace('editor');
+      displayPosts(); // Display posts after CKEditor is initialized
+    };
 
     async function addPost() {
       const title = document.getElementById('title').value;
@@ -52,7 +55,7 @@
         const post = { title, content };
 
         // Fetch current posts
-        let response = await fetch('Xanir360.github.io/main/posts.json');
+        let response = await fetch('https://raw.githubusercontent.com/Xanir360/Xanir360.github.io/main/posts.json');
         if (!response.ok) {
           throw new Error('Network response was not ok ' + response.statusText);
         }
@@ -114,10 +117,6 @@
         });
       }
     }
-
-    window.onload = () => {
-      displayPosts();
-    };
   </script>
 </body>
 </html>
