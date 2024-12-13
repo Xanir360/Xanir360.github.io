@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>مدیریت مطالب با CKEditor</title>
-  <script src="https://cdn.ckeditor.com/4.17.1/standard/ckeditor.js"></script>
+  <script src="https://cdn.ckeditor.com/4.25.0/standard/ckeditor.js"></script> <!-- به‌روزرسانی به آخرین نسخه CKEditor -->
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -53,6 +53,9 @@
 
         // Fetch current posts
         let response = await fetch('https://raw.githubusercontent.com/Xanir360/Xanir360.github.io/main/posts.json');
+        if (!response.ok) {
+          throw new Error('Network response was not ok ' + response.statusText);
+        }
         let posts = await response.json();
 
         // Add new post to posts
@@ -94,7 +97,10 @@
     }
 
     async function displayPosts() {
-      let response = await fetch('posts.json');
+      let response = await fetch('https://raw.githubusercontent.com/Xanir360/Xanir360.github.io/main/posts.json');
+      if (!response.ok) {
+        throw new Error('Network response was not ok ' + response.statusText);
+      }
       let posts = await response.json();
 
       let contentDiv = document.getElementById('contentDiv');
