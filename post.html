@@ -55,7 +55,7 @@
         const post = { title, content };
 
         // Fetch current posts
-        let response = await fetch('https://raw.githubusercontent.com/Xanir360/Xanir360.github.io/main/posts.json');
+        let response = await fetch('https://xanir360.github.io/main/posts.json');
         if (!response.ok) {
           throw new Error('Network response was not ok ' + response.statusText);
         }
@@ -68,7 +68,7 @@
         let updatedContent = btoa(unescape(encodeURIComponent(JSON.stringify(posts))));
 
         // Get the current SHA of the file
-        let shaResponse = await fetch('https://api.github.com/repos/Xanir360/Xanir360.github.io/contents/posts.json', {
+        let shaResponse = await fetch('https://Xanir360.github.io/contents/posts.json', {
           headers: {
             'Authorization': 'token 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'
           }
@@ -77,7 +77,7 @@
         let sha = shaData.sha;
 
         // Update posts.json
-        await fetch('https://api.github.com/repos/Xanir360/Xanir360.github.io/contents/posts.json', {
+        await fetch('https://Xanir360.github.io/contents/posts.json', {
           method: 'PUT',
           headers: {
             'Authorization': 'token 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',
@@ -100,7 +100,7 @@
     }
 
     async function displayPosts() {
-      let response = await fetch('https://raw.githubusercontent.com/Xanir360/Xanir360.github.io/main/posts.json');
+      let response = await fetch('https://Xanir360.github.io/main/posts.json');
       if (!response.ok) {
         throw new Error('Network response was not ok ' + response.statusText);
       }
