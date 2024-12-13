@@ -58,9 +58,19 @@
         // Add new post to posts
         posts.push(post);
 
-        // Update posts.json
+        // Encode updated content to base64
         let updatedContent = btoa(unescape(encodeURIComponent(JSON.stringify(posts))));
 
+        // Get the current SHA of the file
+        let shaResponse = await fetch('https://api.github.com/repos/Xanir360/Xanir360.github.io/contents/posts.json', {
+          headers: {
+            'Authorization': 'token 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'
+          }
+        });
+        let shaData = await shaResponse.json();
+        let sha = shaData.sha;
+
+        // Update posts.json
         await fetch('https://api.github.com/repos/Xanir360/Xanir360.github.io/contents/posts.json', {
           method: 'PUT',
           headers: {
@@ -70,7 +80,7 @@
           body: JSON.stringify({
             message: 'Add new post',
             content: updatedContent,
-            sha: await getFileSha()
+            sha: sha
           })
         });
 
@@ -81,16 +91,6 @@
       } else {
         alert('لطفاً عنوان و محتوا را وارد کنید.');
       }
-    }
-
-    async function getFileSha() {
-      let response = await fetch('https://api.github.com/repos/Xanir360/Xanir360.github.io/contents/posts.json', {
-        headers: {
-          'Authorization': 'token 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'
-        }
-      });
-      let file = await response.json();
-      return file.sha;
     }
 
     async function displayPosts() {
