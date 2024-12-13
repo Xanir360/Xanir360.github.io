@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>مدیریت مطالب با CKEditor</title>
-  <script src="https://cdn.ckeditor.com/4.25.0/standard/ckeditor.js"></script> <!-- به‌روزرسانی به آخرین نسخه CKEditor -->
+  <script src="https://cdn.ckeditor.com/4.17.1/standard/ckeditor.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -42,10 +42,7 @@
   
   <script>
     // Initialize CKEditor
-    window.addEventListener('load', function() {
-      CKEDITOR.replace('editor');
-      displayPosts(); // Display posts after CKEditor is initialized
-    });
+    CKEDITOR.replace('editor');
 
     async function addPost() {
       const title = document.getElementById('title').value;
@@ -55,10 +52,7 @@
         const post = { title, content };
 
         // Fetch current posts
-        let response = await fetch('https://xanir360.github.io/main/posts.json');
-        if (!response.ok) {
-          throw new Error('Network response was not ok ' + response.statusText);
-        }
+        let response = await fetch('main/posts.json');
         let posts = await response.json();
 
         // Add new post to posts
@@ -68,7 +62,7 @@
         let updatedContent = btoa(unescape(encodeURIComponent(JSON.stringify(posts))));
 
         // Get the current SHA of the file
-        let shaResponse = await fetch('https://Xanir360.github.io/contents/posts.json', {
+        let shaResponse = await fetch('contents/posts.json', {
           headers: {
             'Authorization': 'token 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'
           }
@@ -77,7 +71,7 @@
         let sha = shaData.sha;
 
         // Update posts.json
-        await fetch('https://Xanir360.github.io/contents/posts.json', {
+        await fetch('contents/posts.json', {
           method: 'PUT',
           headers: {
             'Authorization': 'token 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',
@@ -100,10 +94,7 @@
     }
 
     async function displayPosts() {
-      let response = await fetch('https://Xanir360.github.io/main/posts.json');
-      if (!response.ok) {
-        throw new Error('Network response was not ok ' + response.statusText);
-      }
+      let response = await fetch('posts.json');
       let posts = await response.json();
 
       let contentDiv = document.getElementById('contentDiv');
@@ -117,6 +108,10 @@
         });
       }
     }
+
+    window.onload = () => {
+      displayPosts();
+    };
   </script>
 </body>
 </html>
