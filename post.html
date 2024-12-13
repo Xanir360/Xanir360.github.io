@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+  <meta charset="UTF-8">
+  <title>مدیریت مطالب با CKEditor</title>
+  <script src="https://cdn.ckeditor.com/4.17.1/standard/ckeditor.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      width: 300px;
+    }
+    .container h2 {
+      color: #007BFF;
+    }
+    .container input, .container textarea, .container button {
+      width: 100%;
+      margin: 10px 0;
+      padding: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>افزودن مطلب جدید</h2>
+    <input type="text" id="title" placeholder="عنوان" required>
+    <textarea id="editor" placeholder="محتوا" rows="5" required></textarea>
+    <button onclick="addPost()">انتشار</button>
+  </div>
+  
+  <script>
+    // Initialize CKEditor
+    CKEDITOR.replace('editor');
+
+    async function addPost() {
+      const title = document.getElementById('title').value;
+      const content = CKEDITOR.instances.editor.getData();
+
+      if (title && content) {
+        const post = { title, content };
+
+        // Fetch current posts
+        let response = await fetch('https://raw.githubusercontent.com/Xanir360/Xanir360.github.io/main/posts.json');
+        let posts = await response.json();
+
+        // Add new post to posts
+        posts.push(post);
+
+        // Update posts.json
+        let updatedContent = btoa(unescape(encodeURIComponent(JSON.stringify(posts))));
+
+        await fetch('https://api.github.com/repos/Xanir360/Xanir360.github.io/contents/posts.json', {
+          method: 'PUT',
+          headers: {
+            'Authorization': 'token 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',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            message: 'Add new post',
+            content: updatedContent,
+            sha: await getFileSha()
+          })
+        });
+
+        alert('مطلب شما با موفقیت منتشر شد.');
+        document.getElementById('title').value = '';
+        CKEDITOR.instances.editor.setData('');
+        displayPosts();
+      } else {
+        alert('لطفاً عنوان و محتوا را وارد کنید.');
+      }
+    }
+
+    async function getFileSha() {
+      let response = await fetch('https://api.github.com/repos/Xanir360/Xanir360.github.io/contents/posts.json', {
+        headers: {
+          'Authorization': 'token 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'
+        }
+      });
+      let file = await response.json();
+      return file.sha;
+    }
+
+    async function displayPosts() {
+      let response = await fetch('posts.json');
+      let posts = await response.json();
+
+      let contentDiv = document.getElementById('contentDiv');
+      if (contentDiv) {
+        contentDiv.innerHTML = '';
+        posts.forEach((post) => {
+          let postDiv = document.createElement('div');
+          postDiv.className = 'post';
+          postDiv.innerHTML = `<h2>${post.title}</h2><p>${post.content}</p>`;
+          contentDiv.appendChild(postDiv);
+        });
+      }
+    }
+
+    window.onload = () => {
+      displayPosts();
+    };
+  </script>
+</body>
+</html>
