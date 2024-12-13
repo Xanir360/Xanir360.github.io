@@ -21,10 +21,6 @@ html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abb
 /*GLOBAL*/
 html{min-width:950px; direction: ltr;}
 body{background:#000;font-family: "yekan",TAHOMA,Arial, Helvetica, sans-serif;font-size:100%;line-height:1em;color:#000;overflow:hidden;
-     display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
     
     }
 
