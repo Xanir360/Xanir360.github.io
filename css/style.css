@@ -1,11 +1,5 @@
 @import url('https://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css');
 
-/*@font-face {
-	font-family: 'yekan';
-	src: url('https://cdn.bayan.ir/blog/templates/shared/fonts/BYekan.woff?download') format('woff');
-	font-weight: normal;
-	font-style: normal;
-}*/
 @font-face {
   font-family: yekan;
   src: url('../fonts/Yekan.eot');
@@ -952,6 +946,29 @@ article, figure, footer, header, nav {
     background: #656565;
     border-color: #656565;
 }
+/* ip userinfo */
+.info-box {
+      background-color: #fff;
+      padding: 10px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      text-align: right;
+      width: 180px;
+      transition: all 0.3s ease;
+    }
+    .info-box:hover {
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      transform: translateY(-5px);
+    }
+    .info-box p {
+      margin: 4px 0;
+      color: #333;
+      font-size: 12px;
+    }
+    .info-box span {
+      font-weight: bold;
+      color: #007BFF;
+    }
 
 /*footer*/
 footer{
