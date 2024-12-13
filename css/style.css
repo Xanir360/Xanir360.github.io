@@ -1092,6 +1092,29 @@ footer .bg-pags li a:hover,footer .bg-pags li.active a{
   margin-left: 8px;
       color: #8C8C8C;
 }
+/* ip user */
+.info-box {
+      background-color: #fff;
+      padding: 10px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      text-align: right;
+      width: 180px;
+      transition: all 0.3s ease;
+    }
+    .info-box:hover {
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      transform: translateY(-5px);
+    }
+    .info-box p {
+      margin: 4px 0;
+      color: #333;
+      font-size: 12px;
+    }
+    .info-box span {
+      font-weight: bold;
+      color: #007BFF;
+    }
 
 /*js css*/
 
