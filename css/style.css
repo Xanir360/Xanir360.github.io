@@ -20,9 +20,7 @@ html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abb
 
 /*GLOBAL*/
 html{min-width:950px; direction: ltr;}
-body{background:#000;font-family: "yekan",TAHOMA,Arial, Helvetica, sans-serif;font-size:100%;line-height:1em;color:#000;overflow:hidden;
-    
-    }
+body{background:#000;font-family: "yekan",TAHOMA,Arial, Helvetica, sans-serif;font-size:100%;line-height:1em;color:#000;overflow:hidden;}
 
 #glob{
 	width:100%;
@@ -1092,29 +1090,6 @@ footer .bg-pags li a:hover,footer .bg-pags li.active a{
   margin-left: 8px;
       color: #8C8C8C;
 }
-/* ip user */
-.info-box {
-      background-color: #fff;
-      padding: 10px;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      text-align: right;
-      width: 180px;
-      transition: all 0.3s ease;
-    }
-    .info-box:hover {
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-      transform: translateY(-5px);
-    }
-    .info-box p {
-      margin: 4px 0;
-      color: #333;
-      font-size: 12px;
-    }
-    .info-box span {
-      font-weight: bold;
-      color: #007BFF;
-    }
 
 /*js css*/
 
@@ -1320,4 +1295,3 @@ a.button-2:hover,a.active-2 { background:#00deff; color:#fff; }
   position: absolute; bottom: 0px; left: -120px; width: 120px; height: 52px; background: #54883e ; z-index: 1;
 }
 .scroll-pane2{height:100%; width:200px; overflow:hidden; padding-right: 10px; margin-top: 0px; text-align: right; direction: rtl;}
-
