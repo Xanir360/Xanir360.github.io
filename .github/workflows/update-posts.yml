@@ -1,0 +1,26 @@
+name: Update Posts
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - posts.json
+
+jobs:
+  update-posts:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository content
+        uses: actions/checkout@v2
+
+      - name: Update posts.json
+        id: update-posts
+        run: |
+          echo 'Updating posts...'
+          node update-posts.js
+
+      - name: Commit and push changes
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "Update posts.json"
+          branch: main
