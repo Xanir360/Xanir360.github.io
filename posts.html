@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+  <meta charset="UTF-8">
+  <title>سایت پویا</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      width: 80%;
+      max-width: 800px;
+      margin: 20px;
+    }
+    .post {
+      border-bottom: 1px solid #ddd;
+      padding: 10px 0;
+    }
+    .post:last-child {
+      border-bottom: none;
+    }
+    .post h2 {
+      color: #007BFF;
+    }
+    .add-post-form {
+      margin-bottom: 20px;
+    }
+    .add-post-form input, .add-post-form textarea, .add-post-form button {
+      width: 100%;
+      margin: 10px 0;
+      padding: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="add-post-form">
+      <h2>افزودن مطلب جدید</h2>
+      <input type="text" id="title" placeholder="عنوان" required>
+      <textarea id="content" placeholder="محتوا" rows="5" required></textarea>
+      <button onclick="triggerUpdatePosts()">انتشار</button>
+    </div>
+    <div id="contentDiv"></div>
+  </div>
+  
+  <script>
+    async function loadPosts() {
+      let response = await fetch('https://raw.githubusercontent.com/Xanir360/Xanir360.github.io/main/posts.json');
+      if (response.ok) {
+        let posts = await response.json();
+        let contentDiv = document.getElementById('contentDiv');
+        posts.forEach(post => {
+          let postDiv = document.createElement('div');
+          postDiv.className = 'post';
+          postDiv.innerHTML = `<h2>${post.title}</h2><p>${post.content}</p>`;
+          contentDiv.appendChild(postDiv);
+        });
+      } else {
+        console.error('Failed to load posts.json:', response.status);
+      }
+    }
+
+    async function triggerUpdatePosts() {
+      const title = document.getElementById('title').value;
+      const content = document.getElementById('content').value;
+
+      if (title && content) {
+        const response = await fetch('https://api.github.com/repos/YOUR_USERNAME/YOUR_REPOSITORY/actions/workflows/update-posts.yml/dispatches', {
+          method: 'POST',
+          headers: {
+            'Authorization': `token YOUR_GITHUB_TOKEN`,
+            'Accept': 'application/vnd.github.v3+json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            ref: "main"
+          })
+        });
+
+        if (response.ok) {
+          alert('Workflow triggered successfully');
+        } else {
+          alert('Failed to trigger workflow: ' + response.statusText);
+        }
+      } else {
+        alert('لطفاً عنوان و محتوا را وارد کنید.');
+      }
+    }
+
+    window.onload = loadPosts;
+  </script>
+</body>
+</html>
