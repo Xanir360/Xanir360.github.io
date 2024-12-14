@@ -56,7 +56,7 @@
   
   <script>
     async function loadPosts() {
-      let response = await fetch('https://raw.githubusercontent.com/Xanir360/Xanir360.github.io/main/posts.json');
+      let response = await fetch('https://Xanir360.github.io/main/posts.json');
       if (response.ok) {
         let posts = await response.json();
         let contentDiv = document.getElementById('contentDiv');
@@ -76,7 +76,7 @@
       const content = document.getElementById('content').value;
 
       if (title && content) {
-        const response = await fetch('https://api.github.com/repos/Xanir360/Xanir360.github.io/actions/workflows/update-posts.yml/dispatches', {
+        const response = await fetch('https://Xanir360.github.io/actions/workflows/update-posts.yml/dispatches', {
           method: 'POST',
           headers: {
             'Authorization': `token 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`,
