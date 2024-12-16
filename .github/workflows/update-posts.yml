@@ -13,11 +13,16 @@ jobs:
       - name: Checkout repository content
         uses: actions/checkout@v2
 
-      - name: Update posts.json
-        id: update-posts
-        run: |
-          echo 'Updating posts...'
-          node update-posts.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run update script
+        run: node update-posts.js
 
       - name: Commit and push changes
         uses: stefanzweifel/git-auto-commit-action@v4
