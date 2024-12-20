@@ -2,7 +2,7 @@
 <html lang="fa">
 <head>
   <meta charset="UTF-8">
-  <title>سایت پویا</title>
+  <title>سایت پویا با Firebase</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -19,116 +19,85 @@
       padding: 20px;
       border-radius: 8px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      width: 80%;
-      max-width: 800px;
-      margin: 20px;
+      width: 300px;
     }
-    .post {
-      border-bottom: 1px solid #ddd;
-      padding: 10px 0;
-    }
-    .post:last-child {
-      border-bottom: none;
-    }
-    .post h2 {
+    .container h2 {
       color: #007BFF;
     }
-    .add-post-form {
-      margin-bottom: 20px;
-    }
-    .add-post-form input, .add-post-form textarea, .add-post-form button {
+    .container input, .container textarea, .container button {
       width: 100%;
       margin: 10px 0;
       padding: 10px;
     }
   </style>
+  <!-- افزودن پیکربندی Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.1.2/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.1.2/firebase-database.js"></script>
+  <script>
+    // تنظیمات Firebase که از داشبورد Firebase کپی کرده‌اید را در اینجا قرار دهید.
+    const firebaseConfig = {
+    apiKey: "AIzaSyCCJjV_QgRvKztZ7WQMuovzhb3QKoEE7Xo",
+    authDomain: "text-9b7a4.firebaseapp.com",
+    projectId: "text-9b7a4",
+    storageBucket: "text-9b7a4.firebasestorage.app",
+    messagingSenderId: "653684031513",
+    appId: "1:653684031513:web:d0baf0d5920030eac1ea88",
+    measurementId: "G-JBHE7SPMXD"
+    };
+    
+    // مقداردهی اولیه Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const database = firebase.database(app);
+  </script>
 </head>
 <body>
   <div class="container">
-    <div class="add-post-form">
-      <h2>افزودن مطلب جدید</h2>
+    <h2>افزودن مطلب جدید</h2>
+    <form id="postForm">
       <input type="text" id="title" placeholder="عنوان" required>
       <textarea id="content" placeholder="محتوا" rows="5" required></textarea>
-      <button onclick="addPost()">انتشار</button>
-    </div>
-    <div id="contentDiv"></div>
+      <button type="button" onclick="addPost()">انتشار</button>
+    </form>
+    <div id="postDiv"></div>
   </div>
   
   <script>
-    async function loadPosts() {
-      let response = await fetch('https://raw.githubusercontent.com/Xanir360/Xanir360.github.io/main/posts.json');
-      if (response.ok) {
-        let posts = await response.json();
-        let contentDiv = document.getElementById('contentDiv');
-        contentDiv.innerHTML = '';
-        posts.forEach(post => {
-          let postDiv = document.createElement('div');
-          postDiv.className = 'post';
-          postDiv.innerHTML = `<h2>${post.title}</h2><p>${post.content}</p><small>${post.date}</small>`;
-          contentDiv.appendChild(postDiv);
-        });
-      } else {
-        console.error('Failed to load posts.json:', response.status);
-      }
-    }
-
     async function addPost() {
       const title = document.getElementById('title').value;
       const content = document.getElementById('content').value;
 
       if (title && content) {
         const post = { title, content, date: new Date().toLocaleString() };
-
-        // Fetch current posts
-        let response = await fetch('https://raw.githubusercontent.com/Xanir360/Xanir360.github.io/main/posts.json');
-        if (!response.ok) {
-          throw new Error('Network response was not ok ' + response.statusText);
-        }
-        let posts = await response.json();
-
-        // Add new post to posts
-        posts.unshift(post);
-
-        // Update posts.json file
-        await updatePostsFile(posts);
+        
+        // افزودن پست جدید به Firebase
+        const newPostKey = firebase.database().ref().child('posts').push().key;
+        await firebase.database().ref('posts/' + newPostKey).set(post);
 
         alert('مطلب شما با موفقیت منتشر شد.');
         document.getElementById('title').value = '';
         document.getElementById('content').value = '';
-        loadPosts();
+        displayPosts();
       } else {
         alert('لطفاً عنوان و محتوا را وارد کنید.');
       }
     }
 
-    async function updatePostsFile(posts) {
-      const updatedContent = btoa(unescape(encodeURIComponent(JSON.stringify(posts))));
-
-      // Get the current SHA of the file
-      let shaResponse = await fetch('https://api.github.com/repos/Xanir360/Xanir360.github.io/contents/posts.json', {
-        headers: {
-          'Authorization': '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'
+    async function displayPosts() {
+      const postsRef = firebase.database().ref('posts');
+      postsRef.on('value', (snapshot) => {
+        const posts = snapshot.val();
+        const postDiv = document.getElementById('postDiv');
+        postDiv.innerHTML = '';
+        for (let key in posts) {
+          const post = posts[key];
+          const postElement = document.createElement('div');
+          postElement.innerHTML = `<h2>${post.title}</h2><p>${post.content}</p><small>${post.date}</small>`;
+          postDiv.appendChild(postElement);
         }
-      });
-      let shaData = await shaResponse.json();
-      let sha = shaData.sha;
-
-      // Update posts.json
-      await fetch('https://api.github.com/repos/Xanir360/Xanir360.github.io/contents/posts.json', {
-        method: 'PUT',
-        headers: {
-          'Authorization': 'token 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',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          message: 'Add new post',
-          content: updatedContent,
-          sha: sha
-        })
       });
     }
 
-    window.onload = loadPosts;
+    window.onload = displayPosts;
   </script>
 </body>
 </html>
