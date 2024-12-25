@@ -35,20 +35,19 @@
   <script src="https://www.gstatic.com/firebasejs/9.1.2/firebase-database.js"></script>
   <script>
     // تنظیمات Firebase که از داشبورد Firebase کپی کرده‌اید را در اینجا قرار دهید.
- const firebaseConfig = {
-		apiKey: "AIzaSyAkcPNZ2abXSvkmQXarzyLusaUfxmjvQBY",
-  authDomain: "posts-c6064.firebaseapp.com",
-  databaseURL: "https://posts-c6064-default-rtdb.firebaseio.com",
-  projectId: "posts-c6064",
-  storageBucket: "posts-c6064.firebasestorage.app",
-  messagingSenderId: "488072882750",
-  appId: "1:488072882750:web:015f21f3e26832ce913f6f",
-  measurementId: "G-2NCP62MSEV"
-  };
+    const firebaseConfig = {
+      apiKey: "AIzaSyAkcPNZ2abXSvkmQXarzyLusaUfxmjvQBY",
+      authDomain: "posts-c6064.firebaseapp.com",
+      databaseURL: "https://posts-c6064-default-rtdb.firebaseio.com",
+      projectId: "posts-c6064",
+      storageBucket: "posts-c6064.firebasestorage.app",
+      messagingSenderId: "488072882750",
+      appId: "1:488072882750:web:015f21f3e26832ce913f6f",
+      measurementId: "G-2NCP62MSEV"
+    };
     
     // مقداردهی اولیه Firebase
-    const app = firebase.initializeApp(firebaseConfig);
-    const database = firebase.database(app);
+    firebase.initializeApp(firebaseConfig);
 
     // تعریف تابع addPost
     async function addPost() {
