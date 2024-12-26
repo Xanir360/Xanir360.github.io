@@ -55,7 +55,7 @@
       const content = document.getElementById('content').value;
 
       if (title && content) {
-        const post = { title, content, date: new Date().toLocaleString() };
+        const post = { title, content, date: new Date().toISOString() };
         
         // افزودن پست جدید به Firebase
         const newPostKey = firebase.database().ref().child('posts').push().key;
@@ -80,13 +80,13 @@
         for (let key in posts) {
           const post = posts[key];
           const postElement = document.createElement('div');
-          postElement.innerHTML = `<h2>${post.title}</h2><p>${post.content}</p><small>${post.date}</small>`;
+          postElement.className = 'post';
+          postElement.innerHTML = `<h2>${post.title}</h2><p>${post.content}</p><small>${convertToJalali(post.date)}</small>`;
           postDiv.appendChild(postElement);
         }
       });
     }
 
-    // نمایش پست‌ها پس از بارگذاری صفحه
     window.onload = displayPosts;
   </script>
 </head>
@@ -96,7 +96,7 @@
     <form id="postForm">
       <input type="text" id="title" placeholder="عنوان" required>
       <textarea id="content" placeholder="محتوا" rows="5" required></textarea>
-      <button type="button" onclick="addPost()">زانتشار</button>
+      <button type="button" onclick="addPost()">انتشار</button>
     </form>
     <div id="postDiv"></div>
   </div>
