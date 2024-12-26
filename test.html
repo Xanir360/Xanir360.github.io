@@ -58,8 +58,13 @@
     // تابع تبدیل تاریخ میلادی به شمسی
     function convertToJalali(gregorianDate) {
       const date = new Date(gregorianDate);
-      const jalaliDate = new JDate(date);
-      return jalaliDate.format('YYYY/MM/DD HH:mm');
+      const year = date.getFullYear();
+      const month = date.getMonth() + 1;
+      const day = date.getDate();
+      const hours = date.getHours();
+      const minutes = date.getMinutes();
+      const jalaliDate = gregorian_to_jalali(year, month, day);
+      return `${jalaliDate[0]}/${jalaliDate[1]}/${jalaliDate[2]} ${hours}:${minutes}`;
     }
 
     async function displayPosts() {
@@ -84,7 +89,7 @@
 </head>
 <body>
   <div class="container">
-    <h2>پست‌های ااااجدید</h2>
+    <h2>پست‌های جدید</h2>
     <div id="postDiv"></div>
   </div>
 </body>
