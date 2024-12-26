@@ -69,7 +69,7 @@
 
     // تابع تبدیل تاریخ میلادی به شمسی
     function convertToJalali(gregorianDate) {
-      const date = moment(gregorianDate, 'MM/DD/YYYY, hh:mm:ss A');
+      const date = moment(gregorianDate, 'MM/DD/YYYY, h:mm:ss A');
       return date.locale('fa').format('YYYY/MM/DD HH:mm');
     }
 
