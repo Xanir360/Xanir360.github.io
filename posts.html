@@ -31,8 +31,8 @@
     }
   </style>
   <!-- افزودن پیکربندی Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/9.1.2/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.1.2/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
   <script>
     // تنظیمات Firebase که از داشبورد Firebase کپی کرده‌اید را در اینجا قرار دهید.
     const firebaseConfig = {
@@ -40,7 +40,7 @@
       authDomain: "posts-c6064.firebaseapp.com",
       databaseURL: "https://posts-c6064-default-rtdb.firebaseio.com",
       projectId: "posts-c6064",
-      storageBucket: "posts-c6064.firebasestorage.app",
+      storageBucket: "posts-c6064.firebaseapp.com",
       messagingSenderId: "488072882750",
       appId: "1:488072882750:web:015f21f3e26832ce913f6f",
       measurementId: "G-2NCP62MSEV"
@@ -96,7 +96,7 @@
     <form id="postForm">
       <input type="text" id="title" placeholder="عنوان" required>
       <textarea id="content" placeholder="محتوا" rows="5" required></textarea>
-      <button type="button" onclick="addPost()">انتشار</button>
+      <button type="button" onclick="addPost()">زانتشار</button>
     </form>
     <div id="postDiv"></div>
   </div>
