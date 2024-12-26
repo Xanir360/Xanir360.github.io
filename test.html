@@ -40,14 +40,14 @@
     }
   </style>
   <!-- افزودن پیکربندی Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js"></script>
+  <script type="module" src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
+  <script type="module" src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js"></script>
   <!-- افزودن اسکریپت تبدیل تاریخ به شمسی -->
   <script src="https://cdn.jsdelivr.net/gh/SCR-IR/jalaliDate-JavaScript/src/jdf.js"></script>
-  <script>
+  <script type="module">
     // تنظیمات Firebase که از داشبورد Firebase کپی کرده‌اید را در اینجا قرار دهید.
     const firebaseConfig = {
-      apiKey: "AIzaSyAkcPNZ2abXSvkmQXarzyLusaUfxmjvQBY",
+   apiKey: "AIzaSyAkcPNZ2abXSvkmQXarzyLusaUfxmjvQBY",
       authDomain: "posts-c6064.firebaseapp.com",
       databaseURL: "https://posts-c6064-default-rtdb.firebaseio.com",
       projectId: "posts-c6064",
@@ -56,10 +56,13 @@
       appId: "1:488072882750:web:015f21f3e26832ce913f6f",
       measurementId: "G-2NCP62MSEV"
     };
-    
+
     // مقداردهی اولیه Firebase
-    const app = firebase.initializeApp(firebaseConfig);
-    const database = firebase.database(app);
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js';
+    const app = initializeApp(firebaseConfig);
+
+    import { getDatabase, ref, onValue } from 'https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js';
+    const database = getDatabase(app);
 
     // تابع تبدیل تاریخ میلادی به شمسی
     function convertToJalali(gregorianDate) {
@@ -69,8 +72,8 @@
     }
 
     async function displayPosts() {
-      const postsRef = database.ref('posts');
-      postsRef.on('value', (snapshot) => {
+      const postsRef = ref(database, 'posts');
+      onValue(postsRef, (snapshot) => {
         const posts = snapshot.val();
         const postDiv = document.getElementById('postDiv');
         postDiv.innerHTML = '';
