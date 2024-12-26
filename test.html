@@ -38,18 +38,17 @@
   <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
   <!-- افزودن اسکریپت تبدیل تاریخ به شمسی -->
-  <script src="https://cdn.jsdelivr.net/gh/SCR-IR/jalaliDate-JavaScript/src/converter.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/SCR-IR/jalaliDate-JavaScript/src/jdf.js"></script>
   <script>
     // تنظیمات Firebase که از داشبورد Firebase کپی کرده‌اید را در اینجا قرار دهید.
     const firebaseConfig = {
-      apiKey: "AIzaSyAkcPNZ2abXSvkmQXarzyLusaUfxmjvQBY",
-      authDomain: "posts-c6064.firebaseapp.com",
-      databaseURL: "https://posts-c6064-default-rtdb.firebaseio.com",
-      projectId: "posts-c6064",
-      storageBucket: "posts-c6064.firebaseapp.com",
-      messagingSenderId: "488072882750",
-      appId: "1:488072882750:web:015f21f3e26832ce913f6f",
-      measurementId: "G-2NCP62MSEV"
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_AUTH_DOMAIN",
+      databaseURL: "YOUR_DATABASE_URL",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_STORAGE_BUCKET",
+      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+      appId: "YOUR_APP_ID"
     };
     
     // مقداردهی اولیه Firebase
@@ -58,12 +57,8 @@
     // تابع تبدیل تاریخ میلادی به شمسی
     function convertToJalali(gregorianDate) {
       const date = new Date(gregorianDate);
-      const jy = date.getJalaliFullYear();
-      const jm = date.getJalaliMonth() + 1;
-      const jd = date.getJalaliDate();
-      const hours = date.getHours();
-      const minutes = date.getMinutes();
-      return `${jy}/${jm}/${jd} ${hours}:${minutes}`;
+      const jalaliDate = new JDate(date);
+      return jalaliDate.format('YYYY/MM/DD HH:mm');
     }
 
     async function displayPosts() {
