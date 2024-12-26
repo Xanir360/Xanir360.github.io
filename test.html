@@ -1,20 +1,20 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="fa">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>سایتا پویا</title>
+  <title>سایت پویا</title>
   <style>
     body {
-      font-family: 'Vazirmatn', sans-serif; /* فونت فارسی */
+      font-family: Arial, sans-serif;
       background-color: #f0f0f0;
       margin: 0;
+      padding: 0;
       display: flex;
-      flex-direction: column; /* تغییر به flex-direction: column */
+      justify-content: center;
       align-items: center;
-      min-height: 100vh; /* حداقل ارتفاع صفحه */
+      height: 100vh;
     }
-
     .container {
       background-color: #fff;
       padding: 20px;
@@ -22,74 +22,76 @@
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       width: 90%;
       max-width: 800px;
-      margin-top: 20px; /* margin-top اضافه شد */
+      margin: 20px;
     }
-
     .post {
       border-bottom: 1px solid #ddd;
-      padding: 15px 0; /* افزایش padding */
-      margin-bottom: 10px;
+      padding: 10px 0;
     }
-
     .post:last-child {
       border-bottom: none;
     }
-
     .post h2 {
       color: #007BFF;
-      margin-bottom: 5px; /* margin-bottom اضافه شد */
+      margin: 0;
     }
-
-    .post p {
-      line-height: 1.5; /* بهبود خوانایی */
-    }
-
     .post small {
-      color: #6c757d; /* رنگ خاکستر */
-      display: block;
-      margin-top: 5px;
+      color: #666;
     }
   </style>
-  <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/jalaali-moment@1.0.7/dist/jalaali-moment.browser.js"></script>
+  <!-- افزودن پیکربندی Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js"></script>
+  <!-- افزودن اسکریپت تبدیل تاریخ به شمسی -->
+  <script src="https://cdn.jsdelivr.net/gh/SCR-IR/jalaliDate-JavaScript/src/jdf.js"></script>
+  <script>
+    // تنظیمات Firebase که از داشبورد Firebase کپی کرده‌اید را در اینجا قرار دهید.
+    const firebaseConfig = {
+      apiKey: "AIzaSyAkcPNZ2abXSvkmQXarzyLusaUfxmjvQBY",
+      authDomain: "posts-c6064.firebaseapp.com",
+      databaseURL: "https://posts-c6064-default-rtdb.firebaseio.com",
+      projectId: "posts-c6064",
+      storageBucket: "posts-c6064.firebaseapp.com",
+      messagingSenderId: "488072882750",
+      appId: "1:488072882750:web:015f21f3e26832ce913f6f",
+      measurementId: "G-2NCP62MSEV"
+    };
+    
+    // مقداردهی اولیه Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const database = firebase.database(app);
+
+    // تابع تبدیل تاریخ میلادی به شمسی
+    function convertToJalali(gregorianDate) {
+      const date = new Date(gregorianDate);
+      const jalaliDate = new JDate(date);
+      return jalaliDate.format('YYYY/MM/DD HH:mm');
+    }
+
+    async function displayPosts() {
+      const postsRef = database.ref('posts');
+      postsRef.on('value', (snapshot) => {
+        const posts = snapshot.val();
+        const postDiv = document.getElementById('postDiv');
+        postDiv.innerHTML = '';
+        for (let key in posts) {
+          const post = posts[key];
+          const postElement = document.createElement('div');
+          postElement.className = 'post';
+          postElement.innerHTML = `<h2>${post.title}</h2><p>${post.content}</p><small>${convertToJalali(post.date)}</small>`;
+          postDiv.appendChild(postElement);
+        }
+      });
+    }
+
+    // نمایش پست‌ها پس از بارگذاری صفحه
+    window.onload = displayPosts;
+  </script>
 </head>
 <body>
   <div class="container">
     <h2>پست‌های جدید</h2>
     <div id="postDiv"></div>
   </div>
-
-  <script>
-    const firebaseConfig = {
-      // ...
-    };
-
-    firebase.initializeApp(firebaseConfig);
-    const database = firebase.database();
-
-    function convertToJalali(gregorianDate) {
-      return moment(gregorianDate).locale('fa').format('YYYY/MM/DD HH:mm');
-    }
-
-    const postsRef = database.ref('posts');
-
-    postsRef.on('value', snapshot => {
-      const posts = snapshot.val();
-      const postDiv = document.getElementById('postDiv');
-      postDiv.innerHTML = '';
-
-      if (posts) { // بررسی وجود پست ها
-        Object.values(posts).forEach(post => { // استفاده از Object.values برای حلقه زدن روی مقادیر
-          const postElement = document.createElement('div');
-          postElement.className = 'post';
-          postElement.innerHTML = `<h2>${post.title}</h2><p>${post.content}</p><small>${convertToJalali(post.date)}</small>`;
-          postDiv.appendChild(postElement);
-        });
-      } else { // نمایش پیام در صورت عدم وجود پست
-        postDiv.innerHTML = '<p>هیچ پستی وجود ندارد.</p>';
-      }
-    });
-  </script>
 </body>
 </html>
