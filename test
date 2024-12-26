@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+  <meta charset="UTF-8">
+  <title>سایت پویا</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      width: 80%;
+      max-width: 800px;
+      margin: 20px;
+    }
+    .post {
+      border-bottom: 1px solid #ddd;
+      padding: 10px 0;
+    }
+    .post:last-child {
+      border-bottom: none;
+    }
+    .post h2 {
+      color: #007BFF;
+    }
+  </style>
+  <!-- افزودن پیکربندی Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+  <!-- افزودن اسکریپت تبدیل تاریخ به شمسی -->
+  <script src="https://cdn.jsdelivr.net/gh/SCR-IR/jalaliDate-JavaScript/src/converter.js"></script>
+  <script>
+    // تنظیمات Firebase که از داشبورد Firebase کپی کرده‌اید را در اینجا قرار دهید.
+    const firebaseConfig = {
+      apiKey: "AIzaSyAkcPNZ2abXSvkmQXarzyLusaUfxmjvQBY",
+      authDomain: "posts-c6064.firebaseapp.com",
+      databaseURL: "https://posts-c6064-default-rtdb.firebaseio.com",
+      projectId: "posts-c6064",
+      storageBucket: "posts-c6064.firebaseapp.com",
+      messagingSenderId: "488072882750",
+      appId: "1:488072882750:web:015f21f3e26832ce913f6f",
+      measurementId: "G-2NCP62MSEV"
+    };
+    
+    // مقداردهی اولیه Firebase
+    firebase.initializeApp(firebaseConfig);
+
+    // تابع تبدیل تاریخ میلادی به شمسی
+    function convertToJalali(gregorianDate) {
+      const date = new Date(gregorianDate);
+      const jy = date.getJalaliFullYear();
+      const jm = date.getJalaliMonth() + 1;
+      const jd = date.getJalaliDate();
+      const hours = date.getHours();
+      const minutes = date.getMinutes();
+      return `${jy}/${jm}/${jd} ${hours}:${minutes}`;
+    }
+
+    async function displayPosts() {
+      const postsRef = firebase.database().ref('posts');
+      postsRef.on('value', (snapshot) => {
+        const posts = snapshot.val();
+        const postDiv = document.getElementById('postDiv');
+        postDiv.innerHTML = '';
+        for (let key in posts) {
+          const post = posts[key];
+          const postElement = document.createElement('div');
+          postElement.className = 'post';
+          postElement.innerHTML = `<h2>${post.title}</h2><p>${post.content}</p><small>${convertToJalali(post.date)}</small>`;
+          postDiv.appendChild(postElement);
+        }
+      });
+    }
+
+    // نمایش پست‌ها پس از بارگذاری صفحه
+    window.onload = displayPosts;
+  </script>
+</head>
+<body>
+  <div class="container">
+    <h2>پست‌های جدید</h2>
+    <div id="postDiv"></div>
+  </div>
+</body>
+</html>
