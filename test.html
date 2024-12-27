@@ -58,6 +58,27 @@
     .post a:hover {
       text-decoration: underline;
     }
+    .pagination-button {
+      background-color: #007BFF;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      margin: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+    .pagination-button:hover {
+      background-color: #0056b3;
+      transform: scale(1.05);
+    }
+    .pagination-info {
+      display: inline-block;
+      margin: 5px;
+      color: #6c757d;
+      font-weight: bold;
+      font-size: 1.1rem;
+    }
   </style>
   <!-- افزودن پیکربندی Firebase -->
   <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
@@ -69,8 +90,9 @@
     // تنظیمات Firebase که از داشبورد Firebase کپی کرده‌اید را در اینجا قرار دهید.
     const firebaseConfig = {
       apiKey: "AIzaSyAkcPNZ2abXSvkmQXarzyLusaUfxmjvQBY",
-     databaseURL: "https://posts-c6064-default-rtdb.firebaseio.com",
-    
+     
+      databaseURL: "https://posts-c6064-default-rtdb.firebaseio.com",
+      
     };
 
     // مقداردهی اولیه Firebase
@@ -79,15 +101,26 @@
     // تعداد پست‌ها در هر صفحه
     const postsPerPage = 5;
     let currentPage = 1;
+    let totalPosts = 0;
 
     // تابع تبدیل تاریخ میلادی به شمسی
     function convertToJalali(gregorianDate) {
-      const date = moment(gregorianDate, 'MM/DD/YYYY, h:mm:ss A');
+      const date = moment(gregorianDate);
+      if (!date.isValid()) {
+        return "تاریخ نامعتبر";
+      }
       return date.locale('fa').format('YYYY/MM/DD HH:mm');
     }
 
+    function fetchPostsCount() {
+      const postsRef = firebase.database().ref('posts');
+      postsRef.once('value', (snapshot) => {
+        totalPosts = snapshot.numChildren();
+        displayPosts();
+      });
+    }
+
     async function displayPosts() {
-      const startAt = (currentPage - 1) * postsPerPage;
       const postsRef = firebase.database().ref('posts').orderByChild('date').limitToLast(postsPerPage * currentPage);
       postsRef.once('value', (snapshot) => {
         const posts = snapshot.val();
@@ -96,10 +129,13 @@
 
         const postArray = [];
         for (let key in posts) {
-          postArray.unshift({ key, ...posts[key] }); // اضافه کردن پست به ابتدای آرایه برای ترتیب نزولی
+          postArray.unshift({ key, ...posts[key] });
         }
 
-        postArray.slice(startAt, startAt + postsPerPage).forEach(post => {
+        const startIndex = (currentPage - 1) * postsPerPage;
+        const endIndex = startIndex + postsPerPage;
+
+        postArray.slice(startIndex, endIndex).forEach(post => {
           const postElement = document.createElement('div');
           postElement.className = 'post';
           postElement.innerHTML = createPostHTML(post.title, post.content, convertToJalali(post.date), post.image, post.key);
@@ -107,12 +143,14 @@
         });
 
         setupPagination(postArray.length);
+      }).catch((error) => {
+        console.error("Error fetching posts: ", error);
       });
     }
 
     // تابع ایجاد HTML پست
     function createPostHTML(title, content, date, image, key) {
-      const summary = content.length > 100 ? content.substring(0, 100) + "..." : content; // خلاصه‌ای از متن
+      const summary = content.length > 100 ? content.substring(0, 100) + "..." : content; 
       return `
         <div class="row">
           <div class="col-md-4"><img src="${image}" alt="${title}"></div>
@@ -126,7 +164,7 @@
     }
 
     // تابع تنظیم صفحه‌بندی
-    function setupPagination(totalPosts) {
+    function setupPagination() {
       const paginationDiv = document.getElementById('pagination');
       paginationDiv.innerHTML = '';
 
@@ -135,6 +173,7 @@
       if (currentPage > 1) {
         const prevButton = document.createElement('button');
         prevButton.innerText = 'صفحه قبل';
+        prevButton.className = 'pagination-button';
         prevButton.onclick = prevPage;
         paginationDiv.appendChild(prevButton);
       }
@@ -142,11 +181,13 @@
       if (currentPage < totalPages) {
         const nextButton = document.createElement('button');
         nextButton.innerText = 'صفحه بعد';
+        nextButton.className = 'pagination-button';
         nextButton.onclick = nextPage;
         paginationDiv.appendChild(nextButton);
       }
 
       const pageInfo = document.createElement('span');
+      pageInfo.className = 'pagination-info';
       pageInfo.innerText = `صفحه ${currentPage} از ${totalPages}`;
       paginationDiv.appendChild(pageInfo);
     }
@@ -161,12 +202,15 @@
 
     // تابع رفتن به صفحه بعد
     function nextPage() {
-      currentPage++;
-      displayPosts();
+      const totalPages = Math.ceil(totalPosts / postsPerPage);
+      if (currentPage < totalPages) {
+        currentPage++;
+        displayPosts();
+      }
     }
 
     // نمایش پست‌ها پس از بارگذاری صفحه
-    window.onload = displayPosts;
+    window.onload = fetchPostsCount;
   </script>
 </head>
 <body>
