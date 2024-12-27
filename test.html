@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>سایت پویا</title>
+  <title>نمایش خلاصه پست‌ها</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
     body {
@@ -32,6 +32,11 @@
     .post:last-child {
       border-bottom: none;
     }
+    .post img {
+      max-width: 100%;
+      height: auto;
+      margin-bottom: 10px;
+    }
     .post h2 {
       color: #007BFF;
       margin-bottom: 5px;
@@ -44,6 +49,15 @@
       display: block;
       margin-top: 5px;
     }
+    .post a {
+      display: inline-block;
+      margin-top: 10px;
+      color: #007BFF;
+      text-decoration: none;
+    }
+    .post a:hover {
+      text-decoration: underline;
+    }
   </style>
   <!-- افزودن پیکربندی Firebase -->
   <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
@@ -55,17 +69,21 @@
     // تنظیمات Firebase که از داشبورد Firebase کپی کرده‌اید را در اینجا قرار دهید.
     const firebaseConfig = {
       apiKey: "AIzaSyAkcPNZ2abXSvkmQXarzyLusaUfxmjvQBY",
-      authDomain: "",
+    //   authDomain: "posts-c6064.firebaseapp.com",
       databaseURL: "https://posts-c6064-default-rtdb.firebaseio.com",
-      projectId: "posts-c6064",
-      storageBucket: "",
-      messagingSenderId: "",
-      appId: "",
-      measurementId: ""
+    // projectId: "posts-c6064",
+    //  storageBucket: "posts-c6064.firebasestorage.app",
+    //  messagingSenderId: "488072882750",
+    //  appId: "1:488072882750:web:015f21f3e26832ce913f6f",
+     // measurementId: "G-2NCP62MSEV"
     };
-    
+
     // مقداردهی اولیه Firebase
     firebase.initializeApp(firebaseConfig);
+
+    // تعداد پست‌ها در هر صفحه
+    const postsPerPage = 5;
+    let currentPage = 1;
 
     // تابع تبدیل تاریخ میلادی به شمسی
     function convertToJalali(gregorianDate) {
@@ -74,19 +92,82 @@
     }
 
     async function displayPosts() {
-      const postsRef = firebase.database().ref('posts');
-      postsRef.on('value', (snapshot) => {
+      const startAt = (currentPage - 1) * postsPerPage;
+      const postsRef = firebase.database().ref('posts').orderByChild('date').limitToLast(postsPerPage * currentPage);
+      postsRef.once('value', (snapshot) => {
         const posts = snapshot.val();
         const postDiv = document.getElementById('postDiv');
         postDiv.innerHTML = '';
+
+        const postArray = [];
         for (let key in posts) {
-          const post = posts[key];
+          postArray.unshift({ key, ...posts[key] }); // اضافه کردن پست به ابتدای آرایه برای ترتیب نزولی
+        }
+
+        postArray.slice(startAt, startAt + postsPerPage).forEach(post => {
           const postElement = document.createElement('div');
           postElement.className = 'post';
-          postElement.innerHTML = `<h2>${post.title}</h2><p>${post.content}</p><small>${convertToJalali(post.date)}</small>`;
+          postElement.innerHTML = createPostHTML(post.title, post.content, convertToJalali(post.date), post.image, post.key);
           postDiv.appendChild(postElement);
-        }
+        });
+
+        setupPagination(postArray.length);
       });
+    }
+
+    // تابع ایجاد HTML پست
+    function createPostHTML(title, content, date, image, key) {
+      const summary = content.length > 100 ? content.substring(0, 100) + "..." : content; // خلاصه‌ای از متن
+      return `
+        <div class="row">
+          <div class="col-md-4"><img src="${image}" alt="${title}"></div>
+          <div class="col-md-4"><h2>${title}</h2><p>${summary}</p></div>
+          <div class="col-md-4">
+            <small>${date}</small>
+            <a href="post.html?id=${key}">ادامه مطلب</a>
+          </div>
+        </div>
+      `;
+    }
+
+    // تابع تنظیم صفحه‌بندی
+    function setupPagination(totalPosts) {
+      const paginationDiv = document.getElementById('pagination');
+      paginationDiv.innerHTML = '';
+
+      const totalPages = Math.ceil(totalPosts / postsPerPage);
+
+      if (currentPage > 1) {
+        const prevButton = document.createElement('button');
+        prevButton.innerText = 'صفحه قبل';
+        prevButton.onclick = prevPage;
+        paginationDiv.appendChild(prevButton);
+      }
+
+      if (currentPage < totalPages) {
+        const nextButton = document.createElement('button');
+        nextButton.innerText = 'صفحه بعد';
+        nextButton.onclick = nextPage;
+        paginationDiv.appendChild(nextButton);
+      }
+
+      const pageInfo = document.createElement('span');
+      pageInfo.innerText = `صفحه ${currentPage} از ${totalPages}`;
+      paginationDiv.appendChild(pageInfo);
+    }
+
+    // تابع رفتن به صفحه قبل
+    function prevPage() {
+      if (currentPage > 1) {
+        currentPage--;
+        displayPosts();
+      }
+    }
+
+    // تابع رفتن به صفحه بعد
+    function nextPage() {
+      currentPage++;
+      displayPosts();
     }
 
     // نمایش پست‌ها پس از بارگذاری صفحه
@@ -95,8 +176,9 @@
 </head>
 <body>
   <div class="container">
-    <h2>پست‌های جدید</h2>
+    <h2>خلاصه پست‌های ارسال‌شده</h2>
     <div id="postDiv"></div>
+    <div id="pagination" class="d-flex justify-content-center mt-3"></div>
   </div>
 </body>
 </html>
