@@ -366,43 +366,44 @@ class DateConverter {
 // مثال استفاده:
 try {
   const jalaliDate = DateConverter.gregorianToJalali(2023, 10, 7);
-  console.log("Jalali Date:", jalaliDate); // خروجی: [1402, 7, 15]
+  //console.log("Jalali Date:", jalaliDate); // خروجی: [1402, 7, 15]
 
   const formattedDate = DateConverter.formatJalaliDate(1402, 7, 15, "YYYY/MM/DD");
-  console.log("Formatted Jalali Date:", formattedDate); // خروجی: "۱۴۰۲/۰۷/۱۵"
+  //console.log("Formatted Jalali Date:", formattedDate); // خروجی: "۱۴۰۲/۰۷/۱۵"
 
   const gregorianDate = DateConverter.jalaliToGregorian(1402, 7, 15);
-  console.log("Gregorian Date:", gregorianDate); // خروجی: [2023, 10, 7]
+  //console.log("Gregorian Date:", gregorianDate); // خروجی: [2023, 10, 7]
 
   const monthName = DateConverter.getJalaliMonthName(7);
-  console.log("Month Name:", monthName); // خروجی: "مهر"
+  //console.log("Month Name:", monthName); // خروجی: "مهر"
 
   const dayOfWeek = DateConverter.getDayOfWeek(1402, 7, 15);
-  console.log("Day of Week:", dayOfWeek); // خروجی: "شنبه"
+  //console.log("Day of Week:", dayOfWeek); // خروجی: "شنبه"
 
   const diffDays = DateConverter.differenceInDays(1402, 7, 15, 1402, 8, 1);
-  console.log("Difference in Days:", diffDays); // خروجی: 16
+  //console.log("Difference in Days:", diffDays); // خروجی: 16
 
   const newDate = DateConverter.addDays(1402, 7, 15, 10);
-  console.log("New Jalali Date:", newDate); // خروجی: [1402, 7, 25]
+  //console.log("New Jalali Date:", newDate); // خروجی: [1402, 7, 25]
 
   const isHoliday = DateConverter.isHoliday(1402, 1, 1);
-  console.log("Is Holiday:", isHoliday); // خروجی: true
+  //console.log("Is Holiday:", isHoliday); // خروجی: true
 
   const season = DateConverter.getSeason(7);
-  console.log("Season:", season); // خروجی: "پاییز"
+  //console.log("Season:", season); // خروجی: "پاییز"
 
   const zodiacSign = DateConverter.getZodiacSign(7, 15);
-  console.log("Zodiac Sign:", zodiacSign); // خروجی: "میزان"
+  //console.log("Zodiac Sign:", zodiacSign); // خروجی: "میزان"
 
   const iranZodiac = DateConverter.getIranZodiac(1402);
-  console.log("Iran Zodiac:", iranZodiac); // خروجی: "شاهین"
+  //console.log("Iran Zodiac:", iranZodiac); // خروجی: "شاهین"
 
   const currentJalaliDate = DateConverter.getCurrentJalaliDate();
-  console.log("Current Jalali Date:", currentJalaliDate);
+  //console.log("Current Jalali Date:", currentJalaliDate);
 
   const currentJalaliDateTime = DateConverter.getCurrentJalaliDateTime();
-  console.log("Current Jalali Date and Time:", currentJalaliDateTime);
+  //console.log("Current Jalali Date and Time:", currentJalaliDateTime);
+  console.log = function() {}; // غیرفعال کردن تمام console.logها
 } catch (error) {
   console.error(error.message);
 }
