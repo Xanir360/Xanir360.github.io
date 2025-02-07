@@ -236,27 +236,42 @@ class DateConverter {
     return this.addDays(jy, jm, jd, -daysToSubtract);
   }
 
-  /**
-   * Check if a Jalali date is a holiday in Iran.
-   * @param {number} jy - Jalali year
-   * @param {number} jm - Jalali month
-   * @param {number} jd - Jalali day
-   * @returns {boolean} True if the date is a holiday, otherwise false
-   */
-  static isHoliday(jy, jm, jd) {
-    const holidays = [
-      "1/1",   // نوروز
-      "1/2",   // نوروز
-      "1/3",   // نوروز
-      "1/4",   // نوروز
-      "1/12",  // روز جمهوری اسلامی
-      "1/13",  // روز طبیعت
-      "3/14",  // رحلت امام خمینی
-      "3/15",  // قیام ۱۵ خرداد
-      "11/22", // پیروزی انقلاب اسلامی
-    ];
-    return holidays.includes(`${jm}/${jd}`);
+/**
+ * Check if a Jalali date is a holiday in Iran.
+ * @param {number} jy - Jalali year
+ * @param {number} jm - Jalali month
+ * @param {number} jd - Jalali day
+ * @returns {boolean} True if the date is a holiday, otherwise false
+ */
+static isHoliday(jy, jm, jd) {
+  // لیست تعطیلات ثابت
+  const holidays = [
+    "1/1",   // نوروز
+    "1/2",   // نوروز
+    "1/3",   // نوروز
+    "1/4",   // نوروز
+    "1/12",  // روز جمهوری اسلامی
+    "1/13",  // روز طبیعت
+    "3/14",  // رحلت امام خمینی
+    "3/15",  // قیام ۱۵ خرداد
+    "11/22", // پیروزی انقلاب اسلامی
+  ];
+
+  // بررسی تعطیلات ثابت
+  const dateKey = `${jm}/${jd}`;
+  if (holidays.includes(dateKey)) {
+    return true;
   }
+
+  // بررسی روز جمعه
+  const dayOfWeek = this.getDayOfWeek(jy, jm, jd);
+  if (dayOfWeek === "جمعه") {
+    return true;
+  }
+
+  // اگر هیچ شرطی برقرار نبود، تعطیل نیست
+  return false;
+}
 
   /**
    * Get the season based on Jalali month.
