@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>سایت پویا با Firebase</title>
+
+<style>
+body {
+  font-family: 'Vazir', Arial, sans-serif;
+  background: linear-gradient(to right, #8360c3, #2ebf91);
+  color: #333;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.container {
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  width: 90%;
+  max-width: 400px;
+  position: relative;
+  text-align: center;
+}
+
+.container h2 {
+  color: #2ebf91;
+}
+
+.container input, .container textarea, .container button {
+  width: 100%;
+  margin: 10px 0;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+.container button {
+  background-color: #8360c3;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.container button:hover {
+  background-color: #2ebf91;
+}
+
+.search-box {
+  width: 100%;
+  margin: 10px 0;
+}
+
+.search-box input {
+  width: calc(100% - 100px);
+  display: inline-block;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-right: 5px;
+  box-sizing: border-box;
+}
+
+.search-box button {
+  width: 90px;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  background-color: #2ebf91;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.search-box button:hover {
+  background-color: #8360c3;
+}
+
+.logout-button {
+  width: calc(100% - 22px);
+  display: inline-block;
+}
+
+.post-list {
+  margin-top: 20px;
+  width: 100%;
+  max-height: 300px;
+  overflow-y: auto;
+  background-color: #f9f9f9;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.post {
+  border-bottom: 1px solid #ddd;
+  padding: 10px;
+}
+
+.post:last-child {
+  border-bottom: none;
+}
+
+.post-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.post-title h3 {
+  margin: 0;
+}
+
+.post-actions {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.post-actions button {
+  background-color: #ff4757;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 5px;
+}
+
+.post-actions button:hover {
+  background-color: #ff6b81;
+}
+
+@media (max-width: 600px) {
+  .container {
+    width: 90%;
+  }
+
+  .search-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .search-box input {
+    width: 100%;
+    margin: 0 0 10px 0;
+  }
+
+  .search-box button {
+    width: 100%;
+  }
+
+  .post-title {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .post-actions {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .post-actions button {
+    width: 100%;
+  }
+}
+
+</style>
+<!-- افزودن پیکربندی Firebase -->
+<script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-firestore.js"></script>
+</head>
+<body>
+<div class="container" id="loginDiv">
+  <h2>ورود به سیستم</h2>
+  <input type="email" id="email" placeholder="ایمیل" required>
+  <input type="password" id="password" placeholder="رمز عبور" required>
+  <button onclick="signIn()">ورود</button>
+  <div class="remember-me"> <input type="checkbox" id="rememberMe"> <label for="rememberMe">مرا به خاطر بسپار</label> </div>
+</div>
+
+<div class="container" style="display:none;" id="postForm">
+  <h2>افزودن مطلب جدید</h2>
+  <form>
+    <input type="hidden" id="postKey">
+    <input type="text" id="title" placeholder="عنوان" required>
+    <input type="text" id="imageUrl" placeholder="آدرس تصویر" required>
+    <textarea id="content" placeholder="محتوا" rows="5" required></textarea>
+    <button type="button" onclick="addPost()">انتشار</button>
+    <button type="button" onclick="updatePost()">بروزرسانی</button>
+  </form>
+  <div class="search-box">
+    <input type="text" id="searchInput" placeholder="جستجوی پست..." onkeyup="searchPosts()">
+    <button onclick="searchPosts()">جستجو</button>
+  </div>
+  <button class="logout-button" type="button" onclick="signOut()">خروج</button>
+</div>
+
+<div class="post-list" id="postDiv"></div>
+
+
+<div class="container" id="loginDiv">
+  <!-- سایر المان‌های موجود -->
+</div>
+
+<div class="container" id="userInfo" style="display: none;">
+  <!-- محتوای مربوط به نمایش اطلاعات کاربر -->
+</div>
+
+<div class="container" style="display:none;" id="postForm">
+  <!-- سایر المان‌های موجود -->
+</div>
+
+
+<script>
+  const firebaseConfig = {
+    
+  };
+  
+   firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+  const rtdb = firebase.database();
+  
+  let logoutTimer;
+
+  function resetLogoutTimer() {
+    clearTimeout(logoutTimer);
+    logoutTimer = setTimeout(signOut, 30 * 60 * 1000); // 30 دقیقه
+  }
+
+  window.onload = function() {
+    const rememberMe = localStorage.getItem('rememberMe');
+    const email = localStorage.getItem('email');
+
+    if (rememberMe === 'true' && email) {
+      document.getElementById('email').value = email;
+      document.getElementById('rememberMe').checked = true;
+    }
+
+    displayPosts();
+    resetLogoutTimer(); // تنظیم تایمر برای خروج خودکار
+  };
+
+  firebase.auth().onAuthStateChanged(user => {
+  if (user) {
+    db.collection('users').doc(user.uid).get().then(doc => {
+      if (doc.exists) {
+        const userInfo = doc.data();
+        if (userInfo.role === 'admin') {
+          document.getElementById('loginDiv').style.display = 'none';
+          document.getElementById('postDiv').style.display = 'block';
+          document.getElementById('postForm').style.display = 'block';
+          document.getElementById('userInfo').style.display = 'block'; // نمایش المان userInfo
+          
+          const userInfoElement = document.getElementById('userInfo');
+          if (userInfoElement) {
+            userInfoElement.innerText = `کاربر: ${userInfo.name} (${user.email})`;
+          } else {
+            console.error('Element with ID userInfo not found.');
+          }
+
+          displayPosts();
+
+          const welcomeMessage = `آقای ${userInfo.name}, به وب سایت خودتون خوش آمدید!`;
+          alert(welcomeMessage);
+        } else {
+          alert('فقط مدیران می‌توانند پست ارسال کنند.');
+          firebase.auth().signOut();
+        }
+      } else {
+        alert('کاربری با این مشخصات پیدا نشد.');
+        firebase.auth().signOut();
+      }
+    }).catch(error => {
+      alert(`خطا در دریافت اطلاعات کاربر: ${error.message}`);
+    });
+  } else {
+    document.getElementById('loginDiv').style.display = 'block';
+    document.getElementById('postDiv').style.display = 'none';
+    document.getElementById('postForm').style.display = 'none';
+    document.getElementById('userInfo').style.display = 'none'; // عدم نمایش المان userInfo هنگام خروج کاربر
+  }
+});
+
+function signIn() {
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
+  const rememberMe = document.getElementById('rememberMe').checked;
+
+  if (!email || !password) {
+    alert('لطفاً ایمیل و رمز عبور خود را وارد کنید.');
+    return;
+  }
+
+  firebase.auth().signInWithEmailAndPassword(email, password)
+    .then(userCredential => {
+    //  console.log('User signed in:', userCredential);
+      if (rememberMe) {
+        localStorage.setItem('rememberMe', 'true');
+        localStorage.setItem('email', email);
+      } else {
+        localStorage.removeItem('rememberMe');
+        localStorage.removeItem('email');
+      }
+      displayPosts();
+      resetLogoutTimer(); // تنظیم تایمر برای خروج خودکار
+    })
+    .catch(error => {
+      console.error('Error during signIn:', error);
+      switch (error.code) {
+        case 'auth/invalid-email':
+          alert('فرمت ایمیل وارد شده صحیح نیست.');
+          break;
+        case 'auth/user-disabled':
+          alert('حساب کاربری شما غیرفعال شده است.');
+          break;
+        case 'auth/user-not-found':
+          alert('کاربری با این مشخصات پیدا نشد.');
+          break;
+        case 'auth/wrong-password':
+          alert('رمز عبور وارد شده صحیح نیست.');
+          break;
+        default:
+          alert(`خطا در ورود: ${error.message}`);
+      }
+    });
+}
+
+
+  function signOut() {
+    firebase.auth().signOut().then(() => {
+      document.getElementById('postDiv').innerHTML = '';
+      alert('شما از سیستم خارج شدید.');
+    });
+  }
+
+  async function addPost() {
+    const title = document.getElementById('title').value;
+    const content = document.getElementById('content').value;
+    const imageUrl = document.getElementById('imageUrl').value;
+
+    if (title && content) {
+      const post = { title, content, imageUrl, date: new Date().toLocaleString() };
+      const newPostKey = rtdb.ref().child('posts').push().key;
+      try {
+        await rtdb.ref('posts/' + newPostKey).set(post);
+        alert('مطلب شما با موفقیت منتشر شد.');
+      } catch (error) {
+        console.error("Error adding document: ", error);
+        alert('خطایی رخ داده است، لطفاً دوباره امتحان کنید.');
+      }
+
+      document.getElementById('title').value = '';
+      document.getElementById('imageUrl').value = '';
+      document.getElementById('content').value = '';
+      displayPosts();
+    } else {
+      alert('لطفاً عنوان و محتوا را وارد کنید.');
+    }
+  }
+
+  async function editPost(postKey) {
+    const postRef = rtdb.ref('posts/' + postKey);
+    const doc = await postRef.get();
+    if (doc.exists()) {
+      const post = doc.val();
+      document.getElementById('title').value = post.title;
+      document.getElementById('imageUrl').value = post.imageUrl;
+      document.getElementById('content').value = post.content;
+      document.getElementById('postKey').value = postKey;
+    }
+  }
+
+  async function updatePost() {
+    const postKey = document.getElementById('postKey').value;
+    const title = document.getElementById('title').value;
+    const content = document.getElementById('content').value;
+    const imageUrl = document.getElementById('imageUrl').value;
+
+    if (title && content) {
+      const post = { title, content, imageUrl, date: new Date().toLocaleString() };
+      await rtdb.ref('posts/' + postKey).update(post);
+
+      alert('پست با موفقیت بروزرسانی شد.');
+      document.getElementById('title').value = '';
+      document.getElementById('imageUrl').value = '';
+      document.getElementById('content').value = '';
+      document.getElementById('postKey').value = '';
+      displayPosts();
+    } else {
+      alert('لطفاً عنوان و محتوا را وارد کنید.');
+    }
+  }
+
+  async function deletePost(postKey) {
+    await rtdb.ref('posts/' + postKey).remove();
+    displayPosts();
+  }
+
+window.addEventListener('online', checkConnection);
+window.addEventListener('offline', checkConnection);
+
+function checkConnection() {
+  if (navigator.onLine) {
+    console.log('You are online');
+    // می‌توانیم دوباره تلاش کنیم تا پست‌ها را نمایش دهیم
+    displayPosts();
+  } else {
+    console.log('You are offline');
+    alert('شما به اینترنت متصل نیستید. لطفاً اتصال اینترنت خود را بررسی کنید.');
+  }
+}
+
+async function displayPosts() {
+  const postDiv = document.getElementById('postDiv');
+  postDiv.innerHTML = '';
+  
+  if (!navigator.onLine) {
+    alert('شما به اینترنت متصل نیستید. لطفاً اتصال اینترنت خود را بررسی کنید.');
+    return;
+  }
+
+  try {
+    const postsRef = rtdb.ref('posts').orderByChild('date');
+    const snapshot = await postsRef.get();
+    
+    if (snapshot.exists()) {
+      snapshot.forEach(doc => {
+        const post = doc.val();
+        const postElement = document.createElement('div');
+        postElement.className = 'post';
+        postElement.innerHTML = `
+          <div class="post-title">
+            <h3>${post.title}</h3>
+            <div class="post-actions">
+              <button onclick="editPost('${doc.key}')">ویرایش</button>
+              <button onclick="deletePost('${doc.key}')">حذف</button>
+            </div>
+          </div>
+        `;
+        postDiv.appendChild(postElement);
+      });
+    } else {
+      postDiv.innerHTML = 'هیچ پستی برای نمایش وجود ندارد.';
+    }
+  } catch (error) {
+    console.error("Error fetching posts: ", error);
+    alert('خطایی در دریافت پست‌ها رخ داده است. لطفاً اتصال اینترنت خود را بررسی کنید.');
+  }
+}
+
+
+
+  function searchPosts() {
+    const query = document.getElementById('searchInput').value.toLowerCase();
+    const postDiv = document.getElementById('postDiv');
+    const posts = postDiv.getElementsByClassName('post');
+    for (let i = 0; i < posts.length; i++) {
+      const postTitle = posts[i].getElementsByTagName('h3')[0].innerText.toLowerCase();
+      if (postTitle.includes(query)) {
+        posts[i].style.display = '';
+      } else {
+        posts[i].style.display = 'none';
+      }
+    }
+  }
+
+  window.onload = function() {
+    const rememberMe = localStorage.getItem('rememberMe');
+    const email = localStorage.getItem('email');
+
+    if (rememberMe === 'true' && email) {
+      document.getElementById('email').value = email;
+      document.getElementById('rememberMe').checked = true;
+    }
+
+    displayPosts();
+  };
+
+  document.addEventListener('mousemove', resetLogoutTimer);
+  document.addEventListener('keypress', resetLogoutTimer);
+  document.addEventListener('click', resetLogoutTimer);
+  document.addEventListener('touchstart', resetLogoutTimer);
+</script>
+
+</body>
+</html>
